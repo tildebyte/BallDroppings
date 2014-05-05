@@ -4,6 +4,7 @@ class BumpyInstrument implements Instrument{
 
     // constructor for this instrument
     BumpyInstrument(float pitch, float amplitude){
+        Frequency freq = Frequency.ofMidiNote(pitch);
         // create a wave for the amplitude envelope.
         // The name of the method "gen7" is a reference to a genorator in Csound.
         // This is a somewhat silly, but demonstrative wave.  It rises from 0 to 1
@@ -17,7 +18,7 @@ class BumpyInstrument implements Instrument{
 
         // create new instances of any UGen objects as necessary
         // The tone is the first ten harmonics of a saw wave.
-        toneOsc = new Oscil(pitch, 1.0f, Waves.sawh(10));
+        toneOsc = new Oscil(freq, 1.0f, Waves.sawh(10));
         envOsc = new Oscil(1.0f, amplitude, myEnv);
 
         // patch everything up to the output

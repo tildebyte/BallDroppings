@@ -19,7 +19,6 @@ import java.util.*;
 import ddf.minim.*;
 import ddf.minim.ugens.*;
 
-float freq;
 Vector balls;
 Vector lines;
 int oldMouseX;
@@ -51,19 +50,18 @@ Minim minim;
 AudioOutput out;
 int bufferSize = 256;
 
-public float _frequencyRange = 6500;
-
-public float frequencyRange(){
-    return _frequencyRange;
-}
-
-public void setFrequencyRange(float f){
-    _frequencyRange = f;
-}
-
+public float _MIDIRange = 12.0;
 public float _friction = 0.99997f;
 
-public float friction(){
+public float getMIDIRange(){
+    return _MIDIRange;
+}
+
+public void setMIDIRange(float MIDIRange){
+    _MIDIRange = MIDIRange;
+}
+
+public float getFriction(){
     return _friction;
 }
 
@@ -85,14 +83,13 @@ void playSound(float rate){
     //                                          (in quarter notes), Instrument
     // 'BumpyInstrument()' - frequency in Hz, amplitude (unknown units;
     //                                                        generally 0 - 1)
-    out.playNote(0.0, 0.9, new BumpyInstrument(rate, 0.1));
+    out.playNote(0.0, 0.9, new BumpyInstrument(rate, 0.08));
 }
 
 void setup(){
     size(600, 400, P3D);
     oldMouseX = -1;
     oldMouseY = -1;
-    freq = 0;
     undoables = new Vector();
     balls = new Vector();//make a new list of balls.
     lines = new Vector();//make a new list of lines.
@@ -330,16 +327,18 @@ void keyPressed(){
         newball_y = mouseY;
     }
     else if(k=='r'){
-        setFrequencyRange(frequencyRange()/1.09);
+        setMIDIRange(getMIDIRange() - 4);
     }
     else if(k=='R'){
-        setFrequencyRange(frequencyRange()*1.09);
+        setMIDIRange(getMIDIRange() + 4);
     }
     else if(k=='f'){
-        setFriction(friction()-0.0001f);
+        // *Decrease* the effect of friction
+        setFriction(getFriction()+0.0001f);
     }
     else if(k=='F'){
-        setFriction(friction()+0.0001f);
+        // *Increase* the effect of friction
+        setFriction(getFriction()-0.0001f);
     }
     else if(k=='g'){
         gravity-=0.001;
@@ -461,7 +460,7 @@ void resetVars(){
     ball_drop_rate = 3000;
     setFriction(0.99997f);
     gravity = 0.01f;
-    setFrequencyRange(6500);
+    setMIDIRange(12);
     newball_x = 300;
     newball_y = 0;
     newball_xlag = 100;
@@ -643,8 +642,8 @@ class Ball {
         oldY = y;
         x+= forceX;
         y+= forceY;
-        forceX *= friction();
-        forceY *= friction();
+        forceX *= getFriction();
+        forceY *= getFriction();
         if(jitter>0)jitter-=0.1;
     }
 
@@ -684,10 +683,12 @@ class Ball {
             forceY = 0;//if it misbehaved.
         }
         else {
-            if(getForceRadius()>1){
-                //generate the pitch
-                long freq = (long)(getForceRadius() * frequencyRange());
-                playSound(freq);
+            if(getForceRadius() >= 0.5 && getForceRadius() <= 10.0){
+                // Map to microtonal MIDI values
+                float MIDI = map(getForceRadius(), 0.5, 10.0, 42.0, 127.0);
+                // pan = map(self.x, 0, width, -1, 1)
+                // Add the global MIDI offset and play
+                playSound(MIDI + getMIDIRange());
             }
             jitter = getForceRadius();
         }
