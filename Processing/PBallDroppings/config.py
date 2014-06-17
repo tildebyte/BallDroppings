@@ -1,11 +1,11 @@
-from java.util import Vector
 from ddf.minim import Minim
-from BumpyInstrument import BumpyInstrument
+from java.util import Vector
+from bumpy_instrument import BumpyInstrument
 
-# Config module for PBallDroppings
-balls = Vector()  # make a list of balls.
-lines = Vector()  # make a list of lines.
-emptyBalls = Vector()  # make a queue for recyclable ball spots.
+# Config module for PBallDroppings.
+balls = Vector()  # Make a list of balls.
+lines = Vector()  # Make a list of lines.
+emptyBalls = Vector()  # Make a queue for recyclable ball spots.
 undoables = Vector()
 newball_x = 300
 newball_y = 0
@@ -29,11 +29,10 @@ undo_busy = 0
 paused = 0
 minim = Minim(this)
 # bufferSize is the audio buffer length, which directly translates to
-# latency (interactivity, really). Less - powerful machines will need a
+# latency (interactivity, really). Less-powerful machines will need a
 # larger buffer at the expense of a decrease in responsiveness.
 bufferSize = 256
 out = minim.getLineOut(Minim.STEREO, bufferSize)
-
 _MIDIRange = 12
 _friction = 0.99997
 
@@ -78,8 +77,8 @@ def resetVars():
 
 def playSound(rate):
     # BumpyInstrument is a Minim Instrument class (in a separate file).
-    # 'out.playNote()' - start time (in quarter notes), duration
-    #                                            (in quarter notes), Instrument
-    # 'BumpyInstrument()' - frequency in Hz, amplitude (unknown units
-    #                                                        generally 0 - 1)
+    # 'out.playNote()' - (start time (in quarter notes), duration
+    #                                            (in quarter notes), Instrument)
+    # 'BumpyInstrument()' - (frequency in Hz, amplitude (unknown units;
+    #                                                        generally 0 - 1))
     out.playNote(0.0, 0.9, BumpyInstrument(rate, 0.08, out))

@@ -1,7 +1,4 @@
-# import config
-
-
-class BounceLine:
+class BounceLine(object):
     def __init__(self, x1=0, y1=0, x2=0, y2=0):
         self.x1 = x1
         self.y1 = y1
@@ -30,24 +27,24 @@ class BounceLine:
         self.y2 = y
 
     def whichSideY(self, x, y):
-        # get the slope - M in y = mx + b
+        # Get the slope; 'm' in y = mx + b
         m = float(self.y2 - self.y1) / (self.x2 - self.x1)
         b = self.y1 - m * self.x1
 
-        # now find out if it's hitting the line seg, and not the entire ray.
-        if x > self.x1 or x < self.x2:
-            # if fallen outside
+        # Now find out if it's hitting the line seg, and not the entire ray.
+        if self.x1 < x or x < self.x2:
+            # If fallen outside...
             return 3
         else:
-            # here is whether or not it's above.
+            # Here is whether or not it's above the line.
             if (x * m + b) > y:
                 return 1
             else:
                 return 0
 
     def fixDirection(self):
-        # this makes sure that x1 is always the smallest of the pair.
-        # swap everyone
+        # This makes sure that x1 is always the smallest of the pair.
+        # Swap everyone.
         swapReport = 0
 
         if self.x1 < self.x2:
@@ -61,7 +58,7 @@ class BounceLine:
         else:
             swapReport = 0
 
-        # also fix verticality.
+        # Also fix verticality.
         if self.x1 == self.x2:
             self.x1 += 0.1
 
